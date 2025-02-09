@@ -1,0 +1,35 @@
+input:
+  mqtt:
+    urls: ['tls://<cluster_url>:8883']
+    connect_timeout: 30s
+    will:
+      enabled: false
+      qos: 0
+      retained: false
+    user: "<mqtt_user>"
+    password: "<mqtt_password>"
+    keepalive: 30
+    tls:
+      enabled: false
+      skip_cert_verify: false
+      enable_renegotiation: false
+    topics: ['temperature']
+    qos: 1
+    clean_session: true
+    auto_replay_nacks: true
+output:
+  snowflake_streaming:
+    account: "<account_identifier>"
+    user: MAINTENANCE_USER
+    role: REDPANDA_CONNECT
+    database: FACTORY_DB
+    schema: FACTORY_SCHEMA
+    table: TEMPERATURE_READINGS
+    private_key: "${secrets.SNOWFLAKE_PRIVATE_KEY}"
+    private_key_pass: "${secrets.SNOWFLAKE_PRIVATE_KEY_PASS}"
+    schema_evolution:
+      enabled: true
+    max_in_flight: 4
+    batching:
+      byte_size: 50_000_000
+      period: 120s
